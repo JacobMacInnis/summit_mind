@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Summit Mind - Meeting Summarization Assistant</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Summit Mind</h1>
+      <p class="subtitle">
+        ✍️ A lightweight AI assistant that summarizes meetings and extracts key
+        action items using fine-tuned T5 models.<br />
+        ⚡ Compare two models — <strong>T5-Small</strong> and
+        <strong>T5-Base</strong> — to explore the tradeoff between speed and
+        accuracy.
+      </p>
+    </header>
+
+    <main>
+      <section class="input-section">
+        <h2>Upload or Paste Your Meeting Transcript</h2>
+        <textarea
+          id="dialogueInput"
+          placeholder="Paste your meeting text..."
+          rows="10"
+        ></textarea>
+
+        <div class="input-buttons">
+          <button onclick="summarize()">Summarize My Text</button>
+          <label for="fileInput" class="upload-btn">Upload .txt</label>
+
+          <input
+            type="file"
+            id="fileInput"
+            accept=".txt"
+            onchange="handleFileUpload(event)"
+          />
+        </div>
+
+        <h3>Or Try a Prewritten Example</h3>
+        <div id="samples" class="sample-buttons"></div>
+      </section>
+
+      <div id="loading" class="loading hidden">Summarizing... please wait.</div>
+      <div id="error" class="error hidden"></div>
+
+      <section id="results">
+        <h2>Summary Comparison</h2>
+
+        <div class="result-cards">
+          <div class="result-card">
+            <h3>T5-Small Summary <span id="smallTime" class="time"></span></h3>
+            <p id="smallSummary" class="summary-text">...</p>
+          </div>
+          <div class="result-card">
+            <h3>T5-Base Summary <span id="baseTime" class="time"></span></h3>
+            <p id="baseSummary" class="summary-text">...</p>
+          </div>
+        </div>
+
+        <p class="model-note">
+          ⚡ T5-Small responds faster but can miss some details.<br />
+          🧠 T5-Base is slower but produces higher quality summaries.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p class="footer">© 2025 Agricultural Leaf Vision</p>
+    </footer>
+
+    <script src="prewritten_meetings.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

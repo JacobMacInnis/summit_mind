@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+*.venv
+.git/
+.gitignore
+models/summit-mind-t5-base/
+models/summit-mind-t5-base-final/
+models/summit-mind-t5-base-onnx/
