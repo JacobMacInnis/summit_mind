@@ -13,7 +13,10 @@ app = FastAPI()
 # ✅ Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For dev: allow all. Replace with domain in prod.
+    allow_origins=[
+        "https://summit-mind-55f22.web.app",
+        "https://summit-mind-55f22.firebaseapp.com"
+    ],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
