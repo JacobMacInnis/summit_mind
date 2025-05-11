@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="summit-mind.png" alt="Summit Mind Logo" width="200"/>
+  <a href="https://summit-mind-55f22.web.app/" target="_blank">
+    <img src="summit-mind.png" alt="Summit Mind Logo" width="200"/>
+  </a>
 </p>
 
 <h1 align="center">Summit Mind</h1>
@@ -9,6 +11,9 @@
   </em>
 </p>
 
+<p align="center">
+  <strong>Try it live:</strong> <a href="https://summit-mind-55f22.web.app/" target="_blank">https://summit-mind-55f22.web.app/</a>
+</p>
 ---
 
 ## Project Outline
@@ -46,19 +51,19 @@ This dataset is especially useful for training models that need to understand th
 
 ---
 
-## 🔧 Key Features
+## Key Features
 
-- ✍️ **Abstractive dialogue summarization** (e.g., meetings, chats)
-- ⚙️ **Fine-tuned Hugging Face T5 models** using transfer learning principles
-- 📦 **Deployable via Docker & Cloud Run** for serverless, scalable inference
-- 🔁 **Support for model switching** with `MODEL_NAME=small` or `base`
-- 🧪 **Custom training pipeline** using `Seq2SeqTrainer` with ROUGE scoring
-- 💾 **Efficient memory-aware tokenization and padding**
-- 📈 **Evaluation using ROUGE-L + early stopping** for practical tuning
+- **Abstractive dialogue summarization** (e.g., meetings, chats)
+- **Fine-tuned Hugging Face T5 models** using transfer learning principles
+- **Deployable via Docker & Cloud Run** for serverless, scalable inference
+- **Support for model switching** with `MODEL_NAME=small` or `base`
+- **Custom training pipeline** using `Seq2SeqTrainer` with ROUGE scoring
+- **Efficient memory-aware tokenization and padding**
+- **Evaluation using ROUGE-L + early stopping** for practical tuning
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - Python 3.10
 - FastAPI
@@ -69,7 +74,7 @@ This dataset is especially useful for training models that need to understand th
 
 ---
 
-## 📊 Training Configuration
+## Training Configuration
 
 Fine-tuned models using:
 
@@ -84,7 +89,7 @@ Fine-tuned models using:
 
 ---
 
-## 🧪 Lessons Learned
+## Lessons Learned
 
 Experimented with:
 

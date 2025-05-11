@@ -52,7 +52,9 @@ async function summarize() {
             });
             const data = await res.json();
             const time = ((Date.now() - start) / 1000).toFixed(1);
-            document.getElementById(outputId).innerText = data.summary || "⚠️ No summary returned.";
+            const summaryEl = document.getElementById(outputId);
+            summaryEl.innerText = data.summary || "⚠️ No summary returned.";
+            summaryEl.classList.add("loaded");
             document.getElementById(timeId).innerText = `(Took ${time}s)`;
         } catch (err) {
             console.error(`${modelKey} model error:`, err);

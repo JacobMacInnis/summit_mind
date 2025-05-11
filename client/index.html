@@ -19,6 +19,14 @@
         <strong>T5-Base</strong> — to explore the tradeoff between speed and
         accuracy.
       </p>
+
+      <p class="description" style="margin-top: 10px">
+        ⚠️
+        <a href="#disclaimer" style="color: #28a745; text-decoration: underline"
+          >Read the disclaimer</a
+        >
+        to understand project limitations.
+      </p>
     </header>
 
     <main>
@@ -58,11 +66,17 @@
 
         <div class="result-cards">
           <div class="result-card">
-            <h3>T5-Small Summary <span id="smallTime" class="time"></span></h3>
+            <h3>
+              <span class="model-badge">T5-Small</span> Summary
+              <span id="smallTime" class="time"></span>
+            </h3>
             <p id="smallSummary" class="summary-text">...</p>
           </div>
           <div class="result-card">
-            <h3>T5-Base Summary <span id="baseTime" class="time"></span></h3>
+            <h3>
+              <span class="model-badge">T5-Base</span> Summary
+              <span id="baseTime" class="time"></span>
+            </h3>
             <p id="baseSummary" class="summary-text">...</p>
           </div>
         </div>
@@ -70,6 +84,15 @@
         <p class="model-note">
           T5-Small responds faster but can miss some details.<br />
           T5-Base is slower but produces higher quality summaries.
+        </p>
+
+        <p class="model-note">
+          <strong>Disclaimer:</strong> These models are lightly fine-tuned for
+          demonstration purposes only. Training was time and resource
+          constrained, and the goal of this project was to build a complete
+          end-to-end infrastructure for deployment and inference. In a
+          production environment, significant improvements to data handling,
+          training time, hyperparameter tuning, and evaluation would be made.
         </p>
       </section>
     </main>

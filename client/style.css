@@ -1,4 +1,3 @@
-/* Basic resets */
 * {
   margin: 0;
   padding: 0;
@@ -7,14 +6,38 @@
 
 body {
   font-family: "Helvetica Neue", Arial, sans-serif;
-  background: #f5f7fa;
+  background: linear-gradient(to bottom, #f9fbfd, #edf0f5);
   color: #333;
   line-height: 1.6;
 }
 
-/* Header */
+/* ------------------ */
+/* Layout & Main   */
+/* ------------------ */
+main {
+  padding: 30px 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.input-section,
+#results {
+  margin-top: 20px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ------------------ */
+/* Header          */
+/* ------------------ */
 header {
-  background: #062963; /* Dark soft navy */
+  background: #062963;
   color: white;
   text-align: center;
   padding: 30px 20px;
@@ -29,33 +52,48 @@ header h1 {
   max-width: 700px;
   margin: 0 auto;
   font-size: 1.4em;
-  opacity: 0.9;
   padding-bottom: 20px;
+  animation: fadeSlideIn 1s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
 }
 
 .description {
   font-size: 1.2em;
 }
-/* Main container */
-main {
-  padding: 30px 20px;
-  max-width: 1000px;
-  margin: auto;
+
+/* Fade-in subtitle animation */
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Textarea and Buttons */
+/* ------------------ */
+/* Textarea        */
+/* ------------------ */
 textarea {
   width: 100%;
   margin-bottom: 20px;
   border: 1px solid #ccc;
-  border-radius: 3px;
-  text-indent: 0;
-  padding: 12px;
+  border-radius: 8px;
+  padding: 14px;
   font-family: inherit;
   font-size: 1rem;
   resize: vertical;
+  transition: border-color 0.3s;
 }
 
+textarea:focus {
+  border-color: #1abc9c;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+/* ------------------ */
+/* Buttons         */
+/* ------------------ */
 .input-buttons {
   display: flex;
   align-items: center;
@@ -64,6 +102,7 @@ textarea {
 }
 
 button,
+.upload-btn,
 .custom-file-upload {
   background: #28a745;
   color: white;
@@ -74,37 +113,27 @@ button,
   font-size: 1em;
   transition: background 0.3s, transform 0.2s;
   text-decoration: none;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
 }
 
 button:hover,
+.upload-btn:hover,
 .custom-file-upload:hover {
   background: #218838;
   transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
 }
 
-.upload-btn {
-  display: inline-block;
-  padding: 5px 10px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-family: inherit;
-  text-align: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.upload-btn:hover {
-  background-color: #218838;
-}
-
+/* ------------------ */
+/* File Upload     */
+/* ------------------ */
 input[type="file"] {
   display: none;
 }
 
-/* Sample Buttons */
+/* ------------------ */
+/* Sample Buttons  */
+/* ------------------ */
 .sample-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -115,21 +144,11 @@ input[type="file"] {
 .sample-buttons button {
   flex: 1 1 150px;
   min-width: 150px;
-  padding: 10px 10px;
-  background-color: #28a745;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.sample-buttons button:hover {
-  background-color: #218838;
-}
-
-/* Loading, Error */
+/* ------------------ */
+/* Loading + Error */
+/* ------------------ */
 .loading,
 .error {
   text-align: center;
@@ -138,11 +157,55 @@ input[type="file"] {
   color: #ff3333;
 }
 
-.hidden {
+#loading {
   display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  z-index: 999;
+  color: #333;
+  opacity: 0;
 }
 
+#loadingMessage {
+  text-align: center;
+  max-width: 80%;
+  font-size: 1.1em;
+}
+
+/* Spinner inside loading overlay */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 6px solid #ccc;
+  border-top-color: #28a745;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ------------------ */
 /* Results Section */
+/* ------------------ */
 .result-cards {
   display: flex;
   flex-wrap: wrap;
@@ -165,12 +228,27 @@ input[type="file"] {
 .summary-text {
   min-height: 150px;
   white-space: pre-wrap;
+  opacity: 0;
+  transition: opacity 0.5s ease-in;
+}
+
+.summary-text.loaded {
+  opacity: 1;
 }
 
 .time {
   font-size: 0.8em;
   color: gray;
   margin-left: 5px;
+}
+
+.model-badge {
+  background-color: #28a745;
+  color: white;
+  font-size: 0.8em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 6px;
 }
 
 .model-note {
@@ -180,7 +258,9 @@ input[type="file"] {
   margin-top: 30px;
 }
 
-/* Footer */
+/* ------------------ */
+/* Footer          */
+/* ------------------ */
 footer {
   text-align: center;
   padding: 20px;
@@ -188,51 +268,12 @@ footer {
   font-size: 0.9em;
 }
 
-#loading.hidden {
-  display: none !important;
-}
+/* ------------------ */
+/* Responsive          */
+/* ------------------ */
 
-#loading {
-  display: none; /* ✅ Hidden on page load */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.85);
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5em;
-  z-index: 999;
-  color: #333;
-  opacity: 0;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
+@media (max-width: 768px) {
+  .result-cards {
+    flex-direction: column;
   }
-}
-
-.spinner {
-  width: 48px;
-  height: 48px;
-  border: 6px solid #ccc;
-  border-top-color: #28a745;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-#loadingMessage {
-  text-align: center;
-  max-width: 80%;
-  font-size: 1.1em;
 }
