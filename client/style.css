@@ -14,24 +14,28 @@ body {
 
 /* Header */
 header {
-  background: #0b3d91; /* Dark soft navy */
+  background: #062963; /* Dark soft navy */
   color: white;
   text-align: center;
   padding: 30px 20px;
 }
 
 header h1 {
-  font-size: 2.5em;
+  font-size: 2.7em;
   margin-bottom: 10px;
 }
 
 .subtitle {
   max-width: 700px;
   margin: 0 auto;
-  font-size: 1.1em;
+  font-size: 1.4em;
   opacity: 0.9;
+  padding-bottom: 20px;
 }
 
+.description {
+  font-size: 1.2em;
+}
 /* Main container */
 main {
   padding: 30px 20px;
@@ -182,4 +186,53 @@ footer {
   padding: 20px;
   color: #888;
   font-size: 0.9em;
+}
+
+#loading.hidden {
+  display: none !important;
+}
+
+#loading {
+  display: none; /* ✅ Hidden on page load */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  z-index: 999;
+  color: #333;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 6px solid #ccc;
+  border-top-color: #28a745;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#loadingMessage {
+  text-align: center;
+  max-width: 80%;
+  font-size: 1.1em;
 }

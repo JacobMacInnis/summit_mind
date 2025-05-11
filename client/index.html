@@ -13,6 +13,8 @@
       <p class="subtitle">
         A lightweight AI assistant that summarizes meetings and extracts key
         action items using fine-tuned T5 models.<br />
+      </p>
+      <p class="description">
         Compare two models — <strong>T5-Small</strong> and
         <strong>T5-Base</strong> — to explore the tradeoff between speed and
         accuracy.
@@ -44,7 +46,11 @@
         <div id="samples" class="sample-buttons"></div>
       </section>
 
-      <div id="loading" class="loading hidden">Summarizing... please wait.</div>
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p id="loadingMessage">Summarizing... please wait.</p>
+      </div>
+
       <div id="error" class="error hidden"></div>
 
       <section id="results">
