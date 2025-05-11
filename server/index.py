@@ -1,16 +1,35 @@
-# server.py
-
-from fastapi import FastAPI, Query
+import os
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
 import torch
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import re
 
+torch.set_num_threads(1)
+
+# Read model name from environment variable ("small" or "base")
+MODEL_NAME = os.environ.get("MODEL_NAME", "base").lower()
+assert MODEL_NAME in ["small", "base"], "MODEL_NAME must be 'small' or 'base'"
+
+MODEL_PATHS = {
+    "small": "./models/summit-mind-t5-small",
+    "base": "./models/summit-mind-t5-base-final-pytorch"
+}
+
+print(f"🔄 Loading model '{MODEL_NAME}' from {MODEL_PATHS[MODEL_NAME]}")
+tokenizer = T5Tokenizer.from_pretrained(MODEL_PATHS[MODEL_NAME])
+model = T5ForConditionalGeneration.from_pretrained(MODEL_PATHS[MODEL_NAME]).to("cpu")
+
+# Warm model to reduce first-request latency
+dummy = tokenizer("summarize: hello", return_tensors="pt", padding=True).to(model.device)
+with torch.no_grad():
+    _ = model.generate(**dummy, max_new_tokens=10)
+
+
 app = FastAPI()
 
-# ✅ Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -22,61 +41,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Preload both models
-from fastapi.middleware.cors import CORSMiddleware
-
-# Enable CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-models = {}
-tokenizers = {}
-
-# # Load T5-small
-# models["small"] = T5ForConditionalGeneration.from_pretrained("./models/summit-mind-t5-small").to("cpu")
-# tokenizers["small"] = T5Tokenizer.from_pretrained("./models/summit-mind-t5-small")
-
-# # Load T5-base
-# models["base"] = T5ForConditionalGeneration.from_pretrained("./models/summit-mind-t5-base-final-pytorch").to("cpu")
-# tokenizers["base"] = T5Tokenizer.from_pretrained("./models/summit-mind-t5-base-final-pytorch")
-
-# Lazy-load models and tokenizers only when first requested
-models = {"small": None, "base": None}
-tokenizers = {"small": None, "base": None}
-
-model_paths = {
-    "small": "./models/summit-mind-t5-small",
-    "base": "./models/summit-mind-t5-base-final-pytorch"
-}
-
-
 class SummarizeRequest(BaseModel):
     dialogue: str
-    t5_model: Optional[str] = "base"  # default to "base"
 
 def extract_action_items(summary: str):
     action_items = []
-    sentences = re.split(r'(?<=[\.\!\?])\s+', summary)
+    sentences = re.split(r'(?<=[\.!?])\s+', summary)
     for sentence in sentences:
         if re.search(r'\b(will|should|needs to|plans to|agrees to|must)\b', sentence, re.IGNORECASE):
             action_items.append(sentence.strip())
     return action_items
 
-def generate_summary_and_actions(dialogue: str, model_name: str):
-    if models[model_name] is None or tokenizers[model_name] is None:
-        print(f"🔄 Loading {model_name} model from disk...")
-        tokenizers[model_name] = T5Tokenizer.from_pretrained(model_paths[model_name])
-        models[model_name] = T5ForConditionalGeneration.from_pretrained(model_paths[model_name]).to("cpu")
 
-    model = models[model_name]
-    tokenizer = tokenizers[model_name]
-
-    print(f"🛠 Running inference with model: {model_name}, device: {model.device}, model id: {id(model)}")
+def generate_summary_and_actions(dialogue: str):
     input_text = "summarize: " + dialogue
     inputs = tokenizer(
         input_text,
@@ -85,35 +62,27 @@ def generate_summary_and_actions(dialogue: str, model_name: str):
         truncation=True,
         padding="max_length"
     )
-
-    # Make sure inputs are moved to the correct model device
     inputs = {k: v.to(model.device) for k, v in inputs.items()}
-
-    # Generate summary
-    with torch.no_grad():  # ✅ important for safe inference, no gradients
+    with torch.no_grad():
         summary_ids = model.generate(
             **inputs,
             max_new_tokens=60,
-            num_beams=4,
+            num_beams=1,
             early_stopping=True
         )
-
     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     actions = extract_action_items(summary)
-
     return summary, actions
 
+@app.options("/summarize")
+async def options_summarize():
+    return JSONResponse(content=None)
 
 @app.post("/summarize")
 async def summarize(request: SummarizeRequest):
-    model_choice = request.t5_model.lower() if request.t5_model else "base"
-
-    if model_choice not in models:
-        return {"error": f"Invalid model '{model_choice}'. Available options: base, small"}
-
-    summary, actions = generate_summary_and_actions(request.dialogue, model_choice)
+    summary, actions = generate_summary_and_actions(request.dialogue)
     return {
         "summary": summary,
         "action_items": actions,
-        "model_used": model_choice
+        "model_used": MODEL_NAME
     }

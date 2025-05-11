@@ -1,5 +1,6 @@
-// const API_URL = "https://your-cloudrun-service-url/summarize"; // Replace this!
-const API_URL = 'https://summit-mind-api-191769586244.us-east1.run.app/summarize';
+const SMALL_MODEL = "https://summit-mind-api-small-191769586244.us-east1.run.app/summarize";
+const BASE_MODEL = "https://summit-mind-api-base-191769586244.us-east1.run.app/summarize";
+
 async function summarize() {
     const dialogue = document.getElementById('dialogueInput').value.trim();
     if (!dialogue) return alert("Please paste or upload a dialogue!");
@@ -12,12 +13,12 @@ async function summarize() {
         const [smallStart, baseStart] = [Date.now(), Date.now()];
 
         const [smallRes, baseRes] = await Promise.all([
-            fetch(API_URL, {
+            fetch(SMALL_MODEL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ dialogue, t5_model: "small" })
             }),
-            fetch(API_URL, {
+            fetch(BASE_MODEL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ dialogue, t5_model: "base" })

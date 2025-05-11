@@ -1,6 +1,10 @@
 # Use an official Python runtime as parent image
 FROM python:3.10-slim
 
+# Accept model name at build time
+ARG MODEL_NAME
+ENV MODEL_NAME=$MODEL_NAME
+
 # Set working directory
 WORKDIR /app
 
@@ -20,12 +24,16 @@ RUN pip install poetry
 RUN poetry config virtualenvs.create false \
  && poetry install --only main --no-root --no-interaction --no-ansi
 
-# Copy the rest of your application
-COPY . /app
+COPY models/${MODEL_NAME} /app/models/${MODEL_NAME}
+
+# Copy just the minimal required application code
+COPY start_server.py /app/
+COPY server/ /app/server/
 
 # Expose port
 EXPOSE 8000
 
+LABEL cache_bust="rebuild-$(date +%s)"
 # Command to run the server
 # CMD ["poetry", "run", "uvicorn", "server.index:app", "--host", "0.0.0.0", "--port", "8000"]
 CMD ["python", "start_server.py"]

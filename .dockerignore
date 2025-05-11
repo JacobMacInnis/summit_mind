@@ -7,6 +7,8 @@ venv/
 *.venv
 .git/
 .gitignore
-models/summit-mind-t5-base/
-models/summit-mind-t5-base-final/
-models/summit-mind-t5-base-onnx/
+models/*
+!models/summit-mind-t5-small/
+!models/summit-mind-t5-base-final-pytorch/
+
+
