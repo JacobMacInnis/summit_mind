@@ -1,14 +1,13 @@
 # summit_mind/training/finetune_samsum.py
 import os
 
-# ✅ Disable TensorFlow and force PyTorch
+# Disable TensorFlow and force PyTorch
 os.environ["USE_TF"] = "0"
 os.environ["TRANSFORMERS_NO_TF"] = "1"
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 import torch
-import transformers
 from datasets import load_dataset
 from transformers import (
     DataCollatorForSeq2Seq,
@@ -21,7 +20,7 @@ from transformers import (
 import evaluate
 import numpy as np
 
-# ✅ Monkey-patch generation method to prevent MPS LongTensor crash in `generate()`
+# Monkey-patch generation method to prevent MPS LongTensor crash in `generate()`
 from transformers.generation.utils import GenerationMixin
 
 def patched_prepare_special_tokens(self, generation_config, has_attention_mask, device):
@@ -42,7 +41,7 @@ def patched_prepare_special_tokens(self, generation_config, has_attention_mask, 
 GenerationMixin._prepare_special_tokens = patched_prepare_special_tokens
 
 def main():
-    # ✅ Force CPU or MPS consistently
+    # Force CPU or MPS consistently
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
     print("Loading SAMSum dataset...")
@@ -56,8 +55,6 @@ def main():
     model.config.pad_token_id = tokenizer.pad_token_id
     model.config.eos_token_id = tokenizer.eos_token_id
 
-    # ❌ Do NOT manually set decoder_start_token_id — let model handle it
-    # model.generation_config.decoder_start_token_id = tokenizer.pad_token_id
 
     def preprocess_data(batch):
         inputs = ["summarize: " + dialogue for dialogue in batch["dialogue"]]
@@ -92,7 +89,7 @@ def main():
         learning_rate=2e-4,
         per_device_train_batch_size=6,
         per_device_eval_batch_size=6,
-        num_train_epochs=1,  # ⏱️ Short epoch for debug
+        num_train_epochs=1,
         weight_decay=0.01,
         save_total_limit=2,
         fp16=False,
@@ -128,12 +125,11 @@ def main():
         data_collator=data_collator,
     )
 
-    # ✅ Ensure model is on the correct device and generation uses same device
+    # Ensure model is on the correct device and generation uses same device
     trainer.model = trainer.model.to(device)
     trainer.gen_kwargs = {
         "max_length": 150,
         "num_beams": 4,
-        # "device": device,
     }
 
     print("Starting training...")

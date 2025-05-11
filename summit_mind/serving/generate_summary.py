@@ -1,13 +1,12 @@
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-# Load your fine-tuned model
+# Load fine-tuned model
 model_path = "./models/summit-mind-t5-small"
 tokenizer = T5Tokenizer.from_pretrained(model_path)
 model = T5ForConditionalGeneration.from_pretrained(model_path)
-model = model.to("cpu")  # or "cuda" if you have a GPU
+model = model.to("cpu")
 
 def summarize(dialogue: str):
-    # Prefix "summarize:" just like during training
     input_text = "summarize: " + dialogue
     inputs = tokenizer(input_text, return_tensors="pt", max_length=512, truncation=True, padding="max_length")
     inputs = {k: v.to(model.device) for k, v in inputs.items()}
@@ -15,8 +14,8 @@ def summarize(dialogue: str):
     # Generate the summary
     summary_ids = model.generate(
         **inputs,
-        max_new_tokens=60,  # You can adjust how long summaries are
-        num_beams=4,        # Beam search improves quality (you can tune later)
+        max_new_tokens=60,
+        num_beams=4,
         early_stopping=True
     )
     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
@@ -30,10 +29,8 @@ def extract_action_items(summary: str):
     Extracts action items from a model-generated summary based on common future-oriented patterns.
     """
     action_items = []
-    # Split summary into sentences first
     sentences = re.split(r'(?<=[\.\!\?])\s+', summary)
     
-    # Look for sentences that likely indicate an action
     for sentence in sentences:
         if re.search(r'\b(will|should|needs to|plans to|agrees to|must)\b', sentence, re.IGNORECASE):
             action_items.append(sentence.strip())
@@ -104,4 +101,3 @@ if len(actionItems):
     print("\nExtracted Action Items:")
     for item in actionItems:
         print("-", item)
-# The above code is a simple example of how to use the T5 model for summarization and action item extraction.

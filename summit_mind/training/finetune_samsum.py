@@ -31,7 +31,7 @@ def main():
         model_inputs = tokenizer(
             inputs,
             max_length=512,
-            padding="max_length",   # ✅ NEW!
+            padding="max_length",
             truncation=True,
         )
 
@@ -40,7 +40,7 @@ def main():
             labels = tokenizer(
                 batch["summary"],
                 max_length=150,
-                padding="max_length",   # ✅ NEW!
+                padding="max_length",
                 truncation=True,
             )
 
@@ -64,10 +64,10 @@ def main():
         num_train_epochs=1,
         weight_decay=0.01,
         save_total_limit=2,
-        fp16=False, #torch.cuda.is_available(),  # Use mixed precision if GPU available
+        fp16=False, #torch.cuda.is_available(),
         logging_dir="./models/logs",
         logging_steps=50,
-        report_to="none",  # disable wandb if you aren't using it
+        report_to="none",
         predict_with_generate=True,
         
     )
@@ -81,11 +81,11 @@ def main():
         train_dataset=tokenized_datasets["train"],
         eval_dataset=tokenized_datasets["test"],
         tokenizer=tokenizer,
-        # predict_with_generate=True,
     )
     print("Trainer initialized!")
 
     print("Starting training...")
+    
     # Fine-tune the model
     trainer.train()
     print("Training complete!")
